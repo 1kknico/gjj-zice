@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>益阳公积金 · 提取资格自测</title>
+<style>
+  :root{
+    --primary:#14539a; --primary-dark:#0e3d73; --primary-light:#e8f0fa;
+    --gold:#e8a33d; --success:#1e8e3e; --success-bg:#e8f5ec;
+    --danger:#d93025; --danger-bg:#fdecea;
+    --text:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f3f6fa;
+    --card:#ffffff; --radius:14px; --shadow:0 2px 10px rgba(20,40,80,.06);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:"Microsoft YaHei","PingFang SC","Segoe UI",sans-serif; background:var(--bg); color:var(--text); line-height:1.6;}
+  .container{max-width:980px; margin:0 auto; padding:0 16px 60px;}
+
+  /* Header */
+  header{background:linear-gradient(135deg,var(--primary-dark),var(--primary) 60%,#1d6ab5); color:#fff; padding:26px 0 20px;}
+  .header-inner{max-width:980px; margin:0 auto; padding:0 16px; display:flex; align-items:center; gap:14px;}
+  .header-logo{width:46px; height:46px; border-radius:12px; background:rgba(255,255,255,.14); display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0;}
+  .header-title{font-size:21px; font-weight:700; letter-spacing:1px;}
+  .header-sub{font-size:13px; opacity:.85; margin-top:2px;}
+  .header-right{margin-left:auto; }
+  .btn-reset{border:1px solid rgba(255,255,255,.5); color:#fff; background:transparent; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px;}
+  .btn-reset:hover{background:rgba(255,255,255,.12);}
+
+  /* Steps */
+  .steps{display:flex; align-items:center; gap:8px; margin:20px 0 6px; flex-wrap:wrap;}
+  .step-item{display:flex; align-items:center; gap:7px; color:var(--muted); font-size:13px;}
+  .step-dot{width:22px; height:22px; border-radius:50%; background:#e0e7ef; color:#94a3b8; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;}
+  .step-item.active{color:var(--primary); font-weight:700;}
+  .step-item.active .step-dot{background:var(--primary); color:#fff;}
+  .step-item.done{color:var(--success);}
+  .step-item.done .step-dot{background:var(--success); color:#fff;}
+  .step-sep{width:26px; height:2px; background:#dfe5ec;}
+
+  /* Cards */
+  .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px; margin-top:16px;}
+  .card h2{font-size:18px; color:var(--primary-dark); display:flex; align-items:center; gap:8px;}
+  .card .sub{color:var(--muted); font-size:13px; margin-top:4px;}
+
+  /* Global form */
+  .opt-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+  .opt{flex:1 1 140px; border:2px solid var(--line); border-radius:10px; padding:12px 14px; cursor:pointer; text-align:center; transition:.15s; user-select:none;}
+  .opt:hover{border-color:#b9cdec;}
+  .opt.selected{border-color:var(--primary); background:var(--primary-light); font-weight:700; color:var(--primary-dark);}
+  .opt .opt-title{font-size:14px;}
+  .opt .opt-desc{font-size:12px; color:var(--muted); margin-top:2px;}
+  .opt.selected .opt-desc{color:var(--primary-dark);}
+  .q-field{margin-bottom:4px;}
+
+  .btn{display:inline-flex; align-items:center; gap:8px; border:none; border-radius:10px; padding:12px 26px; font-size:15px; cursor:pointer; font-weight:700;}
+  .btn-primary{background:var(--primary); color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-ghost{background:#fff; color:var(--primary); border:1px solid #b9cdec;}
+  .btn-ghost:hover{background:var(--primary-light);}
+  .btn-success{background:var(--success); color:#fff;}
+  .btn-danger{background:var(--danger); color:#fff;}
+  .btn-row{display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;}
+
+  /* Category grid */
+  .cat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:16px;}
+  .cat-card{border:2px solid var(--line); border-radius:var(--radius); padding:12px 12px 10px; cursor:pointer; transition:.15s; background:#fff; position:relative;}
+  .cat-card:hover{border-color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow);}
+  .cat-card .cat-no{font-size:12px; color:var(--gold); font-weight:700;}
+  .cat-card .cat-icon{font-size:22px;}
+  .cat-card .cat-title{font-size:13.5px; font-weight:700; margin-top:5px; color:var(--text); line-height:1.35;}
+  .cat-card .cat-tagline{font-size:12px; color:var(--muted); margin-top:3px; line-height:1.45;}
+  .cat-card.blocked{cursor:not-allowed; opacity:.55;}
+  .cat-card.blocked:hover{transform:none; border-color:var(--line); box-shadow:none;}
+  .cat-badge{position:absolute; top:12px; right:12px; font-size:11px; background:var(--danger-bg); color:var(--danger); padding:2px 8px; border-radius:20px; font-weight:700;}
+  .cat-badge.warn{background:#fff7e6; color:#b26a00;}
+
+  /* Questions */
+  .q-card{border:1px solid var(--line); border-radius:12px; padding:16px 16px 14px; margin-top:14px; background:#fbfcfe;}
+  .q-card .q-text{font-size:15px; font-weight:700;}
+  .q-card .q-hint{font-size:12.5px; color:var(--muted); margin-top:4px;}
+  .q-options{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+  .q-opt{border:2px solid var(--line); border-radius:9px; padding:9px 16px; cursor:pointer; font-size:14px; user-select:none;}
+  .q-opt:hover{border-color:#b9cdec;}
+  .q-opt.selected{border-color:var(--primary); background:var(--primary-light); color:var(--primary-dark); font-weight:700;}
+  .q-opt.failed{border-color:var(--danger); background:var(--danger-bg); color:var(--danger);}
+
+  /* Result */
+  .result-banner{border-radius:12px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;}
+  .result-banner .r-icon{font-size:34px; line-height:1;}
+  .result-banner .r-title{font-size:17px; font-weight:700;}
+  .result-banner .r-desc{font-size:14px; margin-top:4px;}
+  .result-banner.pass{background:var(--success-bg); border:1px solid #b7e0c3;}
+  .result-banner.fail{background:var(--danger-bg); border:1px solid #f5c6c1;}
+  .fail-list{margin-top:14px;}
+  .fail-item{display:flex; gap:10px; padding:10px 12px; border:1px solid #f5c6c1; background:#fff; border-radius:10px; margin-top:8px; font-size:14px;}
+  .fail-item .fi-icon{color:var(--danger); font-weight:700;}
+  .fail-item .fi-reason{font-weight:700; color:var(--danger);}
+  .fail-item .fi-hint{color:var(--muted); font-size:13px; margin-top:2px;}
+
+  /* Info blocks */
+  .info-block{margin-top:16px; border-left:4px solid var(--primary); background:var(--primary-light); padding:12px 14px; border-radius:0 10px 10px 0; font-size:13.5px;}
+  .info-block.gold{border-left-color:var(--gold); background:#fff8ec;}
+  .amount-box{margin-top:14px; background:#f6f8fb; border:1px dashed #c3cede; border-radius:10px; padding:12px 14px; font-size:13.5px;}
+  .amount-box .ab-title{font-weight:700; color:var(--primary-dark);}
+  details.ref-box{margin-top:14px; border:1px solid var(--line); border-radius:10px; padding:10px 14px; font-size:13.5px; background:#fff;}
+  details.ref-box summary{cursor:pointer; font-weight:700; color:var(--primary-dark);}
+  details.ref-box .ref-body{margin-top:8px; color:#374151; white-space:pre-line;}
+
+  /* Modal */
+  .modal-backdrop{position:fixed; inset:0; background:rgba(15,30,60,.55); display:none; align-items:center; justify-content:center; z-index:100; padding:20px;}
+  .modal-backdrop.open{display:flex;}
+  .modal{background:#fff; border-radius:16px; width:100%; max-width:620px; max-height:88vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.25);}
+  .modal-head{background:linear-gradient(135deg,var(--primary-dark),var(--primary)); color:#fff; padding:18px 22px; border-radius:16px 16px 0 0; position:sticky; top:0; z-index:2;}
+  .modal-head .mh-title{font-size:17px; font-weight:700; display:flex; align-items:center; gap:8px;}
+  .modal-head .mh-sub{font-size:12.5px; opacity:.9; margin-top:3px;}
+  .modal-body{padding:18px 22px 24px;}
+  .mat-group{margin-top:16px;}
+  .mat-group:first-child{margin-top:4px;}
+  .mat-group .mg-title{font-size:14px; font-weight:700; color:var(--primary-dark); padding-bottom:6px; border-bottom:2px solid var(--primary-light); margin-bottom:8px;}
+  .mat-item{display:flex; gap:10px; padding:8px 4px; border-bottom:1px dashed var(--line); font-size:14px; cursor:pointer;}
+  .mat-item input{width:17px; height:17px; accent-color:var(--success); margin-top:3px; flex-shrink:0;}
+  .mat-item .checked-text{text-decoration:line-through; color:var(--muted);}
+  .mat-item .mat-tag{font-size:11px; background:var(--gold); color:#fff; padding:1px 7px; border-radius:20px; margin-left:6px; font-weight:700;}
+  .modal-note{margin-top:16px; background:#f6f8fb; border-radius:10px; padding:12px 14px; font-size:12.8px; color:#374151;}
+  .modal-notes h3{font-size:13.5px; color:var(--primary-dark); margin-top:16px;}
+  .modal-notes ul{margin-top:6px; padding-left:18px; font-size:13px; color:#374151;}
+  .modal-notes li{margin-top:3px;}
+  .modal-foot{display:flex; gap:10px; justify-content:flex-end; margin-top:20px; flex-wrap:wrap;}
+
+  .toast{position:fixed; left:50%; bottom:34px; transform:translateX(-50%); background:#1f2937; color:#fff; padding:11px 20px; border-radius:10px; font-size:14px; opacity:0; transition:.25s; pointer-events:none; z-index:200; box-shadow:0 6px 20px rgba(0,0,0,.2);}
+  .toast.show{opacity:1;}
+
+  /* Cover 封面 */
+  #sec-cover{position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; padding:24px;
+    background:linear-gradient(160deg,#0e3d73,#14539a 55%,#1d6ab5); overflow-y:auto;}
+  body.on-cover header, body.on-cover .container{display:none;}
+  .cover-card{background:#fff; border-radius:20px; max-width:660px; width:100%; padding:40px 42px 32px; text-align:center;
+    box-shadow:0 24px 70px rgba(0,0,0,.35); margin:auto;}
+  .cover-badge{display:inline-block; background:var(--primary-light); color:var(--primary-dark); font-weight:700; font-size:13px; padding:5px 16px; border-radius:20px;}
+  .cover-card h1{font-size:30px; color:var(--primary-dark); margin-top:18px; line-height:1.45;}
+  .cover-sub{color:var(--muted); font-size:14px; margin-top:12px; line-height:1.7;}
+  .cover-disclaimer{margin-top:22px; background:#fff8ec; border:1px solid #f0d9a8; border-radius:12px; padding:16px 18px; text-align:left;}
+  .cover-disclaimer h3{font-size:14px; color:#b26a00; margin-bottom:8px;}
+  .cover-disclaimer p{font-size:12.8px; color:#5f4a1a; line-height:1.75; margin-top:6px;}
+  .opt.locked{opacity:.45; cursor:not-allowed; background:#f3f5f8; border-color:#e0e4ea;}
+  .official-link{display:inline-block; margin-top:16px; background:var(--primary-light); border:1px solid #b9cdec; color:var(--primary-dark); font-weight:700; font-size:13.5px; padding:9px 16px; border-radius:10px; text-decoration:none;}
+  .official-link:hover{background:#dce8f7;}
+  .cover-agree{margin-top:20px; display:flex; align-items:center; justify-content:center; gap:8px; font-size:14px; color:#374151; user-select:none; cursor:pointer;}
+  .cover-agree input{width:16px; height:16px; accent-color:var(--primary);}
+  #btnEnter{margin-top:16px; width:100%; padding:14px; font-size:16px; border:none; border-radius:12px; background:var(--primary); color:#fff; font-weight:700; cursor:pointer;}
+  #btnEnter:hover:enabled{background:var(--primary-dark);}
+  #btnEnter:disabled{background:#c3cede; cursor:not-allowed;}
+  .sub-block{margin-top:14px; padding:14px; border:1px dashed #b9cdec; border-radius:10px; background:#f8fbff; display:none;}
+  .sub-block .q-text{margin-bottom:6px;}
+  .cat-card.match{border-color:var(--success); background:#f0faf3;}
+  .cat-badge.match{background:var(--success); color:#fff;}
+
+  footer{margin-top:34px; text-align:center; color:var(--muted); font-size:12.5px; line-height:1.8;}
+  .hidden{display:none !important;}
+
+  @media print{
+    body.printing > header, body.printing > footer, body.printing > main, body.printing .toast{display:none !important;}
+    body.printing .modal-backdrop{position:static; display:flex; background:none; padding:0;}
+    body.printing .modal{max-width:100%; box-shadow:none; max-height:none;}
+    body.printing .modal-head{border-radius:0;}
+    body.printing .modal-foot{display:none;}
+    body.printing .mat-item input{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<!-- 封面 -->
+<section id="sec-cover">
+  <div class="cover-card">
+    <div class="cover-badge">🏛️ 益阳市住房公积金管理中心</div>
+    <h1>快来测一测：<br>你的公积金到底能不能取？</h1>
+    <div class="cover-disclaimer">
+      <h3>⚠️ 免责申明</h3>
+      <p>本页面为提取业务自助预测试工具，内容依据《益阳市住房公积金管理中心提取业务办事指南》整理，仅供缴存人提前了解提取条件与所需资料，不构成任何办理承诺或法律意见。</p>
+      <p>测试结果仅供参考，能否办理、办理条件及所需资料，以益阳市住房公积金管理中心经办网点柜台的审核答复及现行有效政策为准；本页面内容如有调整，以公积金中心最新公布的办事指南为准。益阳市住房公积金管理中心对本页面内容保留最终解释权。</p>
+    </div>
+    <label class="cover-agree"><input type="checkbox" id="coverAgree"> 我已阅读并同意以上声明</label>
+    <button id="btnEnter" disabled>开始测试 →</button>
+  </div>
+</section>
+
+<header>
+  <div class="header-inner">
+    <div class="header-logo">🏛️</div>
+    <div>
+      <div class="header-title">益阳市住房公积金提取资格自测</div>
+    </div>
+    <div class="header-right">
+      <button class="btn-reset" id="btnReset">重新开始</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="steps" id="steps">
+    <div class="step-item active" id="step1tag"><span class="step-dot">1</span>基本信息</div>
+    <div class="step-sep"></div>
+    <div class="step-item" id="step2tag"><span class="step-dot">2</span>选择提取类别</div>
+    <div class="step-sep"></div>
+    <div class="step-item" id="step3tag"><span class="step-dot">3</span>条件判断与结果</div>
+  </div>
+
+  <!-- Step 1: 基本信息 -->
+  <section id="sec-global" class="card">
+    <h2>📋 基本信息</h2>
+    <div class="sub">请先填写以下基本信息，便于后续精准匹配提取类别和资料清单。</div>
+
+    <div class="q-field" style="margin-top:18px;">
+      <div class="q-text" style="font-weight:700;">您的婚姻状况是？</div>
+      <div class="opt-row" id="g-marital">
+        <div class="opt" data-v="married"><div class="opt-title">已婚</div><div class="opt-desc">需提供配偶证件及关系证明</div></div>
+        <div class="opt" data-v="single"><div class="opt-title">未婚</div><div class="opt-desc">需提供《未婚声明与承诺》</div></div>
+        <div class="opt" data-v="divorced"><div class="opt-title">离异</div><div class="opt-desc">需提供《离婚证》或法院判决书</div></div>
+      </div>
+    </div>
+
+    <div class="q-field" style="margin-top:16px;">
+      <div class="q-text" style="font-weight:700;">您家庭在益阳是否有自住住房？</div>
+      <div class="opt-row" id="g-house">
+        <div class="opt" data-v="no"><div class="opt-title">无</div><div class="opt-desc">在益阳无自有住房</div></div>
+        <div class="opt" data-v="yes"><div class="opt-title">有</div><div class="opt-desc">在益阳有自有住房</div></div>
+      </div>
+      <div class="sub-block" id="houseTypeBox">
+        <div class="q-text" style="font-weight:700;">该住房属于以下哪种情况？</div>
+        <div class="opt-row" id="g-houseType" style="margin-top:8px;">
+          <div class="opt" data-v="forward"><div class="opt-title">期房</div><div class="opt-desc">尚未交付 / 未取得产权证</div></div>
+          <div class="opt" data-v="ready"><div class="opt-title">现房</div><div class="opt-desc">已交付 / 已取得产权证</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-field" style="margin-top:16px;">
+      <div class="q-text" style="font-weight:700;">您家庭是否有住房贷款？</div>
+      <div class="opt-row" id="g-loan">
+        <div class="opt" data-v="no"><div class="opt-title">没有</div><div class="opt-desc">可按需选择各类提取业务</div></div>
+        <div class="opt" data-v="yes"><div class="opt-title">有</div><div class="opt-desc">请选择贷款类型，系统将优先匹配还贷类提取</div></div>
+      </div>
+      <div class="sub-block" id="loanTypeBox">
+        <div class="q-text" style="font-weight:700;">您的住房贷款属于以下哪种类型？</div>
+        <div class="q-hint" id="loanLocalHint" style="display:none; margin-top:8px;">💡 在益阳无自住住房，无法办理本地住房公积金贷款/本地住房公积金组合贷款，仅可选择异地公积金贷款或商业银行住房贷款。</div>
+        <div class="opt-row" id="g-loanType" style="margin-top:8px;">
+          <div class="opt" data-v="local" data-lock-toast="在益阳无自住住房，无法办理本地住房公积金贷款"><div class="opt-title">本地住房公积金贷款</div></div>
+          <div class="opt" data-v="combo" data-lock-toast="在益阳无自住住房，无法办理本地住房公积金组合贷款"><div class="opt-title">本地住房公积金组合贷款</div></div>
+          <div class="opt" data-v="remote"><div class="opt-title">异地公积金贷款</div></div>
+          <div class="opt" data-v="bank"><div class="opt-title">商业银行住房贷款</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-field" style="margin-top:16px;">
+      <div class="q-text" style="font-weight:700;">您是否为父母、子女互助购房提取或参与还贷？</div>
+      <div class="opt-row" id="g-intergen">
+        <div class="opt" data-v="no"><div class="opt-title">否</div><div class="opt-desc">按本人及配偶相关业务办理</div></div>
+        <div class="opt" data-v="yes"><div class="opt-title">是</div><div class="opt-desc">仅办理父母、子女互助购房提取或参与还贷业务</div></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnToCats">下一步：选择提取类别</button>
+    </div>
+  </section>
+
+  <!-- Step 2: 类别选择 -->
+  <section id="sec-cats" class="hidden">
+    <div class="card" style="margin-top:16px;">
+      <h2>🧭 请选择提取类别</h2>
+      <div class="sub">根据您的提取需求选择对应的业务类别（共12类）。</div>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="btnBackGlobal">← 上一步</button>
+    </div>
+  </section>
+
+  <!-- Step 3: 条件问答 -->
+  <section id="sec-questions" class="hidden">
+    <div class="card" style="margin-top:16px;">
+      <h2 id="qTitle">条件判断</h2>
+      <div class="sub" id="qTagline"></div>
+      <div id="qContainer"></div>
+
+      <div class="info-block gold" id="loanWarnBox" style="display:none;">
+        ⚠️ 提示：您家庭在益阳有住房公积金贷款余额，资金须优先用于偿还公积金贷款或本市组合贷款银行部分本息。
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" id="btnBackCats">← 返回类别</button>
+        <button class="btn btn-primary" id="btnJudge">判断是否符合提取条件</button>
+      </div>
+    </div>
+
+    <!-- 判断结果 -->
+    <div id="resultArea" style="margin-top:16px;"></div>
+  </section>
+
+  <footer>
+    本页面依据《益阳市住房公积金管理中心提取业务办事指南》（2026年10月）整理制作，用于提取资格预测试。<br>
+    测试结果仅供参考，最终以益阳市住房公积金管理中心审核为准。
+  </footer>
+</div>
+
+<!-- 资料清单弹窗 -->
+<div class="modal-backdrop" id="materialsModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="mh-title">📄 提取所需资料清单</div>
+      <div class="mh-sub" id="mh-sub">请按清单准备以下材料</div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div style="padding:0 22px 22px;">
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="closeModal()">关闭</button>
+        <button class="btn btn-primary" onclick="printList()">🖨️ 打印清单</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ 数据：12类提取业务 ============ */
+var DISEASES_31 = [
+  "（1）恶性肿瘤——重度","（2）较重急性心肌梗死","（3）严重脑中风后遗症","（4）重大器官移植术或造血干细胞移植术",
+  "（5）冠状动脉搭桥术（或称冠状动脉旁路移植术）","（6）严重慢性肾衰竭","（7）多个肢体缺失",
+  "（8）急性重症肝炎或亚急性重症肝炎","（9）严重非恶性颅内肿瘤","（10）严重慢性肝衰竭",
+  "（11）严重脑炎后遗症或严重脑膜炎后遗症","（12）深度昏迷","（13）双耳失聪","（14）双目失明","（15）瘫痪",
+  "（16）心脏瓣膜手术","（17）严重阿尔茨海默病","（18）严重脑损伤","（19）严重原发性帕金森病",
+  "（20）严重Ⅲ度烧伤","（21）严重特发性肺动脉高压","（22）严重运动神经元病","（23）语言能力丧失",
+  "（24）重型再生障碍性贫血","（25）主动脉手术","（26）严重慢性呼吸衰竭","（27）严重克罗恩病",
+  "（28）严重溃疡性结肠炎","（29）恶性肿瘤——轻度","（30）较轻急性心肌梗死","（31）轻度脑中风后遗症"
+];
+
+var COMMON_NOTES = [
+  "代理人办理：配偶代办须签订《住房公积金提取授权委托书》（模板可在公积金官网下载）；他人代办需提供经公证处认定公证的授权文书。",
+  "电子证照：已实现大数据共享的信息（如省内婚姻状况）或经核验的电子证照（如电子身份证、电子不动产权证等），无需提交原件。"
+];
+
+var LOAN_TYPE_NAMES={local:'本地住房公积金贷款',combo:'本地住房公积金组合贷款',remote:'异地公积金贷款',bank:'商业银行住房贷款'};
+
+var CATS = [
+/* 1 房租 */
+{ id:'rent', no:'（一）', title:'无房职工家庭支付房租', icon:'🏠',
+  tagline:'在缴存地（益阳）无自有住房且正在租房',
+  loanGate:'block',
+  amount:'· 租住公租房：家庭（夫妻）每年累计提取额不超过当年实际支付房租。<br>· 租住商品房：每年累计不超过18000元（1500元/月）；多子女、高层次人才家庭不超过27000元（2250元/月）；新市民、青年人家庭实际房租超过最高限额的按实际房租提取（月房租超过月缴存额的，按月缴存额全额提取）。<br>· 当年未提额度不结转累加至下一年度。可按次（年/季/月，每年最多12次）或按约定方式（签《住房公积金约定提取协议》按月划入账户）提取。',
+  notes:['无房核查：《无房证明》由经办人员通过房产部门或不动产中心联网实时核查并截图；经办网点非缴存地的转缴存地网点协助核查。'].concat(COMMON_NOTES),
+  refs:[{title:'政策名词解释', body:'多子女家庭：依法生育或抚养两个及以上子女，且至少有一个子女未成年（不满十八周岁）。\n高层次人才：享受国务院、省政府特殊津贴专家，国家级、省级人才计划入选者和益阳市高层次人才信息库人才。\n新市民：办理提取手续时未获得本市户籍或获得本市户籍不满三年的缴存人。\n青年人：办理提取手续时年龄在35周岁及以下。\n\n多子女、高层次人才、新市民、青年人也可选择按普通家庭标准提取，无需额外提供资料；如选择相关群体支持政策，需补充提供证明材料。\n缴存地按中心城区（含资阳、赫山、高新区）、沅江、桃江、南县、大通湖、安化六个区域认定。'}],
+  questions:[
+    { id:'q1', type:'select', text:'您的公积金账户（缴存地）所在地属于哪个区域？',
+      opts:[{v:'center',label:'中心城区（资阳、赫山、高新区）'},{v:'yuanjiang',label:'沅江'},{v:'taojiang',label:'桃江'},{v:'nanxian',label:'南县'},{v:'anhua',label:'安化'},{v:'datonghu',label:'大通湖'}] },
+    { id:'q2', type:'select', text:'您家庭的自有住房所在地属于哪个区域？（农村宅基地住房不计入自有住房）',
+      hint:'租房提取以“缴存地（公积金账户所在地）无自有住房”为准；住房位于其他区域、益阳以外或仅有农村宅基地住房的，不影响申请。',
+      opts:[{v:'none',label:'无自有住房'},{v:'rural',label:'仅有农村宅基地住房（不计入）'},{v:'outside',label:'益阳以外地区'},{v:'center',label:'中心城区（资阳、赫山、高新区）'},{v:'yuanjiang',label:'沅江'},{v:'taojiang',label:'桃江'},{v:'nanxian',label:'南县'},{v:'anhua',label:'安化'},{v:'datonghu',label:'大通湖'}],
+      eligible:function(v,a){
+        if(v==='none'||v==='rural'||v==='outside') return true;
+        return v!==a.q1;
+      },
+      fail:'您的公积金账户所在地与自有住房所在地同属一个区域，不符合“缴存地无自有住房”的租房提取条件；住房位于其他区域或仅有农村宅基地住房的，可继续申请。' },
+    { id:'q3', type:'yesno', text:'您是否连续足额缴存住房公积金3个月以上，且缴存状态正常？',
+      eligible:function(v){return v==='yes';},
+      fail:'须连续足额缴存3个月以上且状态正常后方可申请，请确认缴存情况。' },
+    { id:'q4', type:'select', text:'您租住的是？',
+      opts:[{v:'commercial',label:'商品房'},{v:'public',label:'公共租赁住房（公租房）'}] },
+    { id:'q5', type:'select', text:'您家庭属于以下哪类？（影响提取额度及对应资料）',
+      opts:[{v:'normal',label:'普通家庭'},{v:'multi',label:'多子女家庭'},{v:'talent',label:'高层次人才'},{v:'newcomer',label:'新市民'},{v:'youth',label:'青年人'}] },
+    { id:'q6', type:'yesno', text:'实际月房租是否超过租房提取最高限额（1500元/月）？',
+      hint:'仅新市民、青年人家庭按实际房租提取时需要确认；未超过限额按普通标准即可。',
+      showIf:function(a){return (a.q5==='newcomer'||a.q5==='youth') && a.q4==='commercial';} }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    groups[0].items.push('提取人第二代有效身份证原件','提取人个人银行储蓄账户');
+    if(a.marital==='married') groups[0].items.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（已婚提供）');
+    if(a.marital==='divorced') groups[0].items.push('《离婚证》或法院判决书（离异提供）');
+    if(a.marital==='single') groups[0].items.push('《未婚声明与承诺》原件（未婚提供）');
+    var extra=[];
+    if(a.q5==='multi') extra.push({t:'多子女家庭证明材料', tag:'超额提取'});
+    if(a.q5==='talent') extra.push({t:'《益阳市高层次人才证书》及人才金卡等相关证明材料', tag:'超额提取'});
+    if(a.q4==='public') extra.push({t:'《公共租赁住房租赁合同》 + 房租支付收据原件', tag:'租住公租房'});
+    if(a.q6==='yes' && (a.q5==='newcomer'||a.q5==='youth')){
+      extra.push({t:'商品房租赁合同备案证明 + 税务部门完税发票', tag:'超额提取'});
+      if(a.q5==='newcomer') extra.push({t:'户籍证明资料（新市民提供）', tag:'新市民'});
+    }
+    if(extra.length) groups.push({title:'对应资料（按身份/租住类型准备）', items:extra});
+    groups.push({title:'补充说明', items:[
+      {t:'多子女、高层次人才、新市民、青年人选择按普通家庭标准提取的，无需提供上述超额对应资料；如选择群体支持政策，须补充提供对应证明材料。', note:true},
+      {t:'选择「约定提取」方式的，须签订《住房公积金约定提取协议》，该年度内不能同时申请按次提取。', note:true}
+    ]});
+    return groups;
+  }
+},
+
+/* 2 购房 */
+{ id:'buy', no:'（二）', title:'购买自住住房', icon:'🔑',
+  tagline:'购买期房、现房、二手房、首付款、拆迁安置房、保障性住房等',
+  loanGate:'block',
+  amount:'· 提取《不动产权证书》登记日或《房屋买卖合同》备案日之前的账户余额，累计不超过实际支付金额（首付款，不含贷款金额）。<br>· 共有产权：按份/共同共有的，提取额不超过申请人所占产权份额的实际支付金额。<br>· 同一套房最多提取3次（支付首付款、购买期房、购买现房各1次）。',
+  notes:['购买二手房：须填写《缴存职工购买二手提取住房公积金承诺书》，承诺取得不动产权证6个月内不办理转移登记。'].concat(COMMON_NOTES),
+  refs:[{title:'以下情形不得提取', body:'· 配偶婚前购买的住房\n· 商业用房、商住两用房\n· 赠与/继承/分割/合并/置换取得\n· 与直系亲属（配偶、子女、双方父母）间交易\n· 房价明显偏离市场水平\n· 虚构住房消费行为\n· 产权证登记原因为“换发/补发/变更/更正”'}],
+  questions:[
+    { id:'q1', type:'select', text:'您的购房类型是？',
+      opts:[{v:'down',label:'支付购房首付款'},{v:'forward',label:'购买期房'},{v:'ready',label:'购买现房'},{v:'second',label:'购买二手房'},{v:'reloc',label:'购买拆迁安置房'},{v:'guarantee',label:'购买保障性住房或共有住房'}] },
+    { id:'q2', type:'select', text:'您的住房是否存在以下情形？',
+      opts:[{v:'none',label:'以上情形都不存在'},{v:'spouse',label:'配偶婚前购买',showIf:function(a){return a.marital!=='single';}},{v:'commercial',label:'商业用房或商住两用房'},{v:'gift',label:'赠与/继承/分割/合并/置换取得'},{v:'relative',label:'与直系亲属（配偶、子女、双方父母）间交易'},{v:'price',label:'房价明显偏离市场水平'},{v:'fake',label:'虚构住房消费行为'},{v:'recert',label:'产权证登记原因为换发/补发/变更/更正'}],
+      eligible:function(v){return v==='none';},
+      fail:'您的住房属于不予提取的情形，无法办理购买自住住房提取。' },
+    { id:'q3', type:'select', text:'购房所在地是？',
+      opts:[{v:'local',label:'益阳市内'},{v:'province',label:'省内其他市'},{v:'other',label:'省外'}],
+      hint:'省外购房需补充提供异地户籍证明或工作证明。' }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    var c=groups[0].items;
+    c.push('提取人第二代有效身份证原件','提取人个人银行储蓄账户');
+    if(a.marital==='married') c.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（已婚提供）');
+    if(a.q3==='other') c.push('异地户籍证明或工作证明（个税/公积金/社保等）（省外购房提供）');
+    var m=[];
+    if(a.q1==='forward') m=[{t:'已预告/备案的《房屋买卖合同》'},{t:'购房款收据'}];
+    if(a.q1==='ready') m=[{t:'购房合同'},{t:'《不动产权证书》'},{t:'契税完税凭证'},{t:'增值税发票'}];
+    if(a.q1==='second') m=[{t:'购房合同'},{t:'《不动产权证书》'},{t:'契税完税凭证'},{t:'增值税发票'},{t:'《缴存职工购买二手提取住房公积金承诺书》', tag:'二手房'}];
+    if(a.q1==='down') m=[{t:'商品房认购协议'},{t:'首付款承诺书'},{t:'定金票据'}];
+    if(a.q1==='reloc') m=[{t:'拆迁安置补偿协议'},{t:'备案购房合同 + 收据，或 产权证 + 契税 + 发票', tag:'二选一'}];
+    if(a.q1==='guarantee') m=[{t:'准购证明文件'},{t:'备案购房合同 + 收据，或 产权证 + 契税 + 发票', tag:'二选一'}];
+    groups.push({title:'根据购房类型准备', items:m});
+    return groups;
+  }
+},
+
+/* 3 代际互助 */
+{ id:'intergen', no:'（三）', title:'购买新建商品房代际互助', icon:'👨‍👩‍👧‍👦',
+  tagline:'父母、子女互助购房提取或参与还贷',
+  loanGate:'warn', warnText:'⚠️ 仅参与还贷可用', warnToast:'提示：您家庭有住房贷款，代际互助购房提取暂不可办理，仅「代际互助参与还贷」可用。',
+  amount:'· 代际互助购房提取：同一套住房，申请人、配偶和双方父母、子女合计提取金额不超过实际支付购房款（不含贷款金额），且不超过认购协议、买卖合同、产权证签署（登记）日期当日的公积金账户余额之和。<br>· 仅限益阳市新建商品房，二手房、外地购房不适用；同一套房除首付款提取外，仅可选择“购买期房”和“购买现房”中的一种方式。<br>· 代际互助参与还贷：提取金额不超过所绑定贷款实际还款额，绑定期间可对冲还贷、部分还款、提前结清；参与还贷期间不得申请新公积金贷款，不得办理除对冲还贷外的其他提取。',
+  notes:['所有提取人须到同一网点同时办理。','代际互助参与还贷解除绑定：经借款人与参与还贷人共同申请，中心贷款经办网点依据还款风险评估审批通过后办理。'].concat(COMMON_NOTES),
+  refs:[{title:'适用时间条件', body:'· 代际互助购房提取：2025年5月27日（含）之后购买益阳市新建商品房（含支付首付款）。\n· 代际互助参与还贷：2026年8月6日（含）之后购买益阳市新建商品房并办理了住房公积金贷款（仅限益阳市住房公积金贷款）。'}],
+  questions:[
+    { id:'q1', type:'select', text:'您要办理的代际互助类型是？',
+      opts:[{v:'buy',label:'代际互助购房提取'},{v:'repay',label:'代际互助参与还贷'}] },
+    { id:'q2', type:'yesno', text:'您家庭是否于2025年5月27日（含）之后购买益阳市新建商品房（含支付首付款）？',
+      eligible:function(v){return v==='yes';},
+      fail:'代际互助购房提取须为2025年5月27日之后购买益阳市新建商品房（含支付首付款），暂不符合。',
+      showIf:function(a){return a.q1==='buy';} },
+    { id:'q3', type:'select', text:'该住房产权取得情况？',
+      opts:[{v:'first',label:'支付首付款阶段'},{v:'nocert',label:'未取得产权证（已备案或预告登记）'},{v:'cert',label:'已取得《不动产权证书》'}],
+      showIf:function(a){return a.q1==='buy';} },
+    { id:'q2b', type:'yesno', text:'您家庭是否于2026年8月6日（含）之后购买益阳市新建商品房并办理了住房公积金贷款？',
+      eligible:function(v){return v==='yes';},
+      fail:'代际互助参与还贷须为2026年8月6日之后购买益阳市新建商品房并办理公积金贷款，暂不符合。',
+      showIf:function(a){return a.q1==='repay';} }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    var c=groups[0].items;
+    c.push('提取人第二代有效身份证原件','提取人个人银行储蓄账户');
+    if(a.marital==='married') c.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（已婚提供）');
+    c.push('亲属第二代有效身份证原件 + 亲属关系证明材料');
+    if(a.q1==='buy'){
+      var m=[];
+      if(a.q3==='first') m=[{t:'商品房认购协议 + 首付款承诺书 + 定金票据', tag:'支付首付款'}];
+      if(a.q3==='nocert') m=[{t:'已备案或预告登记的《商品房买卖合同》原件 + 购房款支付票据', tag:'未取得产权证'}];
+      if(a.q3==='cert') m=[{t:'商品房买卖合同 + 《不动产权证书》 + 契税完税凭证 + 增值税发票原件', tag:'已取得产权证'}];
+      groups.push({title:'根据产权取得情况准备（代际互助购房提取）', items:m});
+    } else {
+      groups.push({title:'代际互助参与还贷', items:[{t:'无需提供补充材料（由中心核查贷款信息）'}]});
+    }
+    return groups;
+  }
+},
+
+/* 4 建造翻建大修 */
+{ id:'build', no:'（四）', title:'建造、翻建、大修自住住房', icon:'🏗️',
+  tagline:'在益阳市行政区域内建、翻建或大修（C/D级鉴定）自住住房',
+  loanGate:'block',
+  amount:'· 提取《建设工程规划许可证》《乡村建设规划许可证》《农村宅基地批准书》或《不动产权证书》登记日之前的产权人（含夫妻、其他共有权人）账户余额，总提取额不超过实际支付费用总额。<br>· 登记日须在2020年1月1日（含）之后，之前登记的不予提取。<br>· 同一套住房建造/翻建/大修最多提取2次：首次在取得规划许可（或批准书）之后，再次在取得《不动产权证书》之后。',
+  notes:['适用范围：仅限益阳市行政区域内的自住住房。原则上要求建筑物主体完工后申请提取，特殊情况可按工程进度提取相应费用。'].concat(COMMON_NOTES),
+  refs:[{title:'以下情形不得提取', body:'· 商业用房、商住两用房\n· 配偶婚前已拥有产权的住房'}],
+  questions:[
+    { id:'q1', type:'select', text:'您的提取类型是？',
+      opts:[{v:'town',label:'建造住房（城镇）'},{v:'country',label:'建造住房（农村）'},{v:'renew',label:'翻建住房'},{v:'repair',label:'大修住房（C/D级鉴定）'}] },
+    { id:'q2', type:'yesno', text:'该住房是否在益阳市行政区域内？',
+      eligible:function(v){return v==='yes';},
+      fail:'建造、翻建、大修提取仅限益阳市行政区域内自住住房。' },
+    { id:'q3', type:'yesno', text:'该住房是否为商业用房或商住两用房？',
+      eligible:function(v){return v==='no';},
+      fail:'商业用房、商住两用房不得提取。' },
+    { id:'q4', type:'yesno', text:'该住房是否为配偶婚前已拥有产权的住房？',
+      eligible:function(v){return v==='no';},
+      fail:'配偶婚前已拥有产权的住房不得提取。' },
+    { id:'q5', type:'yesno', text:'房屋安全鉴定等级是否为C级或D级？',
+      eligible:function(v){return v==='yes';},
+      fail:'大修提取要求房屋安全鉴定等级为C级或D级。',
+      showIf:function(a){return a.q1==='repair';} }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    var c=groups[0].items;
+    c.push('提取人第二代有效身份证原件','提取人个人银行储蓄账户');
+    if(a.marital==='married') c.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（已婚提供）');
+    c.push('费用支付凭证原件（发票、收据、工程款支付凭证等）');
+    var m=[];
+    if(a.q1==='town') m=[{t:'《建设工程规划许可证》原件'},{t:'若已取得《不动产权证书》，需同时提供该证书原件', tag:'如已取证'}];
+    if(a.q1==='country') m=[{t:'《乡村建设规划许可证》原件'},{t:'《农村宅基地批准书》原件'},{t:'若已取得《不动产权证书》，需同时提供该证书原件', tag:'如已取证'}];
+    if(a.q1==='renew') m=[{t:'《房屋所有权证》或《不动产权证书》原件'},{t:'《建设工程规划许可证》或《乡村建设规划许可证》（视同新建）'}];
+    if(a.q1==='repair') m=[{t:'《房屋所有权证》或《不动产权证书》原件'},{t:'C级或D级《房屋安全鉴定报告》'},{t:'《房屋安全鉴定审查（认定）意见书》'},{t:'大修合同原件'}];
+    groups.push({title:'根据提取类型准备', items:m});
+    return groups;
+  }
+},
+
+/* 5-1 偿还本地住房公积金贷款本息 */
+{ id:'loan-local', no:'（五）', title:'偿还本地住房公积金贷款本息', icon:'💳',
+  tagline:'对冲还贷 / 部分还贷 / 一次性还清',
+  loanGate:'none', loanKey:'local',
+  amount:'· 对冲还贷：委托公积金中心按月代扣，提取金额即对冲还贷额。<br>· 部分还贷：提取职工账户内存款余额但不超过还贷金额，一年仅能办理一次。<br>· 一次性还清：不销户前提下，提取职工账户内存储余额但不超过贷款本息余额。',
+  notes:['特别提醒：偿还本地住房公积金贷款本息的提取金额，仅能用于偿还公积金贷款余额（对冲还贷/部分还贷/一次性还清）。','贷款还款记录可依据网银、手机银行、还款短信等综合判定。'].concat(COMMON_NOTES),
+  refs:[{title:'不得提取的情形', body:'配偶婚前偿还的自住住房贷款本息（婚后共同还贷除外）。'}],
+  questions:[],
+  materials:function(a){
+    var items=['提取人第二代有效身份证原件','提取人个人银行储蓄账户'];
+    if(a.marital==='married') items.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（主借款人为配偶或配偶代办的提供）');
+    return [{title:'所需资料', items:items}];
+  }
+},
+/* 5-2 偿还本地组合贷款银行部分本息 */
+{ id:'loan-combo', no:'（五）', title:'偿还本地组合贷款银行部分本息', icon:'💳',
+  tagline:'本地住房公积金组合贷款中银行部分',
+  loanGate:'none', loanKey:'combo',
+  amount:'· 首次提取：不大于实际还款本息额（含提前还本、提前结清）。<br>· 再次提取：不大于上一次提取以来的实际还款本息额（含提前还本、提前结清）。<br>· 2024年1月1日起认定实际还款本息额；职工家庭合计提取不超过本自然年度该笔贷款首次申请日确定的金额，一个自然年度内未足额提取的，不结转累加至下一年度。',
+  notes:['贷款还款记录可依据网银、手机银行、还款短信等综合判定。'].concat(COMMON_NOTES),
+  refs:[{title:'不得提取的情形', body:'配偶婚前偿还的自住住房贷款本息（婚后共同还贷除外）。'}],
+  questions:[
+    { id:'q2', type:'yesno', text:'该贷款是否为配偶婚前偿还的贷款本息（婚后共同还贷除外）？',
+      eligible:function(v){return v==='no';},
+      fail:'配偶婚前偿还的贷款本息（婚后共同还贷除外）不得提取。',
+      showIf:function(a){return a.marital!=='single';} }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    var c=groups[0].items;
+    c.push('提取人第二代有效身份证原件','提取人个人银行储蓄账户','实际贷款本息还款记录（含提前还本、提前结清）');
+    if(a.marital==='married') c.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（主借款人为配偶或配偶代办的提供）');
+    groups.push({title:'根据贷款类型准备', items:[{t:'无需额外资料', note:true}]});
+    return groups;
+  }
+},
+/* 5-3 偿还异地公积金贷款本息 */
+{ id:'loan-remote', no:'（五）', title:'偿还异地公积金贷款本息', icon:'💳',
+  tagline:'异地住房公积金贷款',
+  loanGate:'none', loanKey:'remote',
+  amount:'· 首次提取：不大于实际还款本息额（含提前还本、提前结清）。<br>· 再次提取：不大于上一次提取以来的实际还款本息额（含提前还本、提前结清）。<br>· 2024年1月1日起认定实际还款本息额；职工家庭合计提取不超过本自然年度该笔贷款首次申请日确定的金额，一个自然年度内未足额提取的，不结转累加至下一年度。',
+  notes:['贷款还款记录可依据网银、手机银行、还款短信等综合判定。'].concat(COMMON_NOTES),
+  refs:[{title:'不得提取的情形', body:'配偶婚前偿还的自住住房贷款本息（婚后共同还贷除外）。'}],
+  questions:[
+    { id:'q2', type:'yesno', text:'该贷款是否为配偶婚前偿还的贷款本息（婚后共同还贷除外）？',
+      eligible:function(v){return v==='no';},
+      fail:'配偶婚前偿还的贷款本息（婚后共同还贷除外）不得提取。',
+      showIf:function(a){return a.marital!=='single';} },
+    { id:'q3', type:'select', text:'贷款房屋所在地是？',
+      opts:[{v:'province',label:'省内其他市'},{v:'other',label:'省外'}],
+      hint:'省外购房贷款需补充提供异地户籍证明或工作证明。' }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    var c=groups[0].items;
+    c.push('提取人第二代有效身份证原件','提取人个人银行储蓄账户','实际贷款本息还款记录（含提前还本、提前结清）');
+    if(a.q3==='other') c.push('异地户籍证明或工作证明（个税/公积金/社保等）（省外购房贷款提供）');
+    if(a.marital==='married') c.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（主借款人为配偶或配偶代办的提供）');
+    groups.push({title:'根据贷款类型准备', items:[{t:'《借款合同》原件', tag:'异地公积金贷款'}]});
+    return groups;
+  }
+},
+/* 5-4 偿还商业银行住房贷款本息 */
+{ id:'loan-bank', no:'（五）', title:'偿还商业银行住房贷款本息', icon:'💳',
+  tagline:'商业银行住房贷款',
+  loanGate:'none', loanKey:'bank',
+  amount:'· 首次提取：不大于实际还款本息额（含提前还本、提前结清）。<br>· 再次提取：不大于上一次提取以来的实际还款本息额（含提前还本、提前结清）。<br>· 2024年1月1日起认定实际还款本息额；职工家庭合计提取不超过本自然年度该笔贷款首次申请日确定的金额，一个自然年度内未足额提取的，不结转累加至下一年度。',
+  notes:['贷款还款记录可依据网银、手机银行、还款短信等综合判定。'].concat(COMMON_NOTES),
+  refs:[{title:'不得提取的情形', body:'配偶婚前偿还的自住住房贷款本息（婚后共同还贷除外）。'}],
+  questions:[
+    { id:'q2', type:'yesno', text:'该贷款是否为配偶婚前偿还的贷款本息（婚后共同还贷除外）？',
+      eligible:function(v){return v==='no';},
+      fail:'配偶婚前偿还的贷款本息（婚后共同还贷除外）不得提取。',
+      showIf:function(a){return a.marital!=='single';} },
+    { id:'q3', type:'select', text:'贷款房屋所在地是？',
+      opts:[{v:'province',label:'省内其他市'},{v:'other',label:'省外'}],
+      hint:'省外购房贷款需补充提供异地户籍证明或工作证明。' },
+    { id:'q4', type:'yesno', text:'您是否为首次办理该笔贷款的还贷提取？',
+      hint:'首次提取须提供《个人信用报告及信息查询授权书》，且必须借款人本人到公积金中心现场授权。' }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    var c=groups[0].items;
+    c.push('提取人第二代有效身份证原件','提取人个人银行储蓄账户','实际贷款本息还款记录（含提前还本、提前结清）');
+    if(a.q3==='other') c.push('异地户籍证明或工作证明（个税/公积金/社保等）（省外购房贷款提供）');
+    if(a.marital==='married') c.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（主借款人为配偶或配偶代办的提供）');
+    var m=[{t:'《借款合同》原件', tag:'商贷'}];
+    if(a.q4==='yes') m.push({t:'《个人信用报告及信息查询授权书》（仅首次提取提供，须借款人本人到公积金中心现场授权）', tag:'仅首次'});
+    groups.push({title:'根据贷款类型准备', items:m});
+    return groups;
+  }
+},
+
+/* 6 装修 */
+{ id:'decorate', no:'（六）', title:'个人住房装修', icon:'🎨',
+  tagline:'自有住房装修，且申请时仍处于装修施工阶段',
+  loanGate:'block',
+  amount:'· 装修总费用按房屋产权证书或商品房买卖合同载明的建筑面积 × 2000元/㎡核定。<br>· 产权人及配偶可分别申请一次装修提取，合计额度不超过核定装修总费用，且总额度不超过30万元。',
+  notes:['实地核查：中心受理后将指派不少于两名工作人员赴装修住房实地核查，填写《益阳市住房公积金装修提取现场核查表》并拍摄影像资料。','违规处理：以虚假材料、虚构装修事实骗提住房公积金的，追回已提取资金，并取消3年内住房公积金提取和贷款资格。'].concat(COMMON_NOTES),
+  refs:[{title:'装修施工阶段进度要求', body:'1. 毛坯房装修：须已完成水电改造，且所装修住房的家具家电尚未入场。\n2. 旧房重装：须为整套房屋翻新，原有装修已拆除，且已完成水电改造。'}],
+  questions:[
+    { id:'q1', type:'yesno', text:'您家庭是否为所装修自住住房的所有权人？',
+      eligible:function(v){return v==='yes';},
+      fail:'须为所装修自住住房的所有权人方可申请。' },
+    { id:'q2', type:'select', text:'装修进度符合以下哪种？（申请时住房须仍处于装修施工阶段）',
+      opts:[{v:'rough',label:'毛坯房装修：已完成水电改造，且家具家电尚未入场'},{v:'renew',label:'旧房重装：整套翻新，原有装修已拆除，且已完成水电改造'}] },
+    { id:'q3', type:'select', text:'房屋产权证取得情况？',
+      opts:[{v:'cert',label:'已取得《不动产权证》或《房屋所有权证》'},{v:'nocert',label:'未取得产权证（已有备案或预告登记的商品房买卖合同）'}] }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    var c=groups[0].items;
+    c.push('提取人第二代有效身份证原件','提取人个人银行储蓄账户');
+    if(a.marital==='married') c.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（已婚提供）');
+    c.push('与施工方签订的《住房装修合同》，或具有同等效力的装修材料购销合同、劳务协议、工程预算等');
+    groups.push({title:'根据房屋产权性质准备', items:[
+      a.q3==='cert'
+        ? {t:'《不动产权证》或《房屋所有权证》', tag:'已取得产权证'}
+        : {t:'已备案或预告登记的商品房买卖合同', tag:'未取得产权证'}
+    ]});
+    return groups;
+  }
+},
+
+/* 7 改造 */
+{ id:'renovate', no:'（七）', title:'适老化、适儿化、老旧住房自主改造', icon:'♿',
+  tagline:'父母满60周岁 / 抚养14周岁以下子女 / 房龄满20年改造',
+  loanGate:'block',
+  amount:'· 按材料购置单据、住房改造协议、费用支付凭证等核定实际改造支出，一套住房提取金额最高不超过3万元。<br>· 同一套住房满足条件时可叠加办理三类改造提取，累计提取金额不超过9万元。',
+  notes:['适老化改造：每个家庭最多选定两套自住住房，每套仅限办理一次。','适儿化改造：每个家庭仅可选定一套自住住房办理一次。','老旧住房自主改造：每个家庭不限套数，每套仅限办理一次。','房龄认定：以不动产权证或登记簿上载明的建成时间、竣工时间为准。'].concat(COMMON_NOTES),
+  questions:[
+    { id:'q1', type:'select', text:'您要办理的改造类型是？',
+      opts:[{v:'elder',label:'适老化改造'},{v:'child',label:'适儿化改造'},{v:'old',label:'老旧住房自主改造'}] },
+    { id:'q2', type:'yesno', text:'您或配偶的父母一方是否年满60周岁？',
+      eligible:function(v){return v==='yes';},
+      fail:'适老化改造须您或配偶父母一方年满60周岁。',
+      showIf:function(a){return a.q1==='elder';} },
+    { id:'q2c', type:'yesno', text:'您家庭是否抚养14周岁及以下子女？',
+      eligible:function(v){return v==='yes';},
+      fail:'适儿化改造须您家庭抚养14周岁及以下子女。',
+      showIf:function(a){return a.q1==='child';} },
+    { id:'q2o', type:'yesno', text:'该住房房龄是否满20年及以上？（以产权证载明建成/竣工时间为准）',
+      eligible:function(v){return v==='yes';},
+      fail:'老旧住房自主改造须房龄满20年及以上。',
+      showIf:function(a){return a.q1==='old';} },
+    { id:'q3', type:'yesno', text:'改造住房是否为益阳市行政区域内家庭自有产权住房？',
+      eligible:function(v){return v==='yes';},
+      fail:'改造住房须为益阳市行政区域内家庭自有产权住房。' },
+    { id:'q4', type:'select', text:'房屋产权证取得情况？',
+      opts:[{v:'cert',label:'已取得《不动产权证》或《房屋所有权证》'},{v:'nocert',label:'未取得产权证（已有备案或预告登记的商品房买卖合同）'}] }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    var c=groups[0].items;
+    c.push('提取人第二代有效身份证原件','提取人个人银行储蓄账户');
+    if(a.marital==='married') c.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（已婚提供）');
+    c.push(a.q4==='cert'
+      ? {t:'《不动产权证书》或《房屋所有权证》原件', tag:'已取得产权证'}
+      : {t:'已备案或预告登记的《商品房买卖合同》原件', tag:'未取得产权证'});
+    c.push('材料购置单据、住房改造协议、费用支付凭证');
+    var m=[];
+    if(a.q1==='elder') m=[{t:'年满60周岁父母的有效身份证件原件'},{t:'直系亲属关系证明材料（如户口簿等）'}];
+    if(a.q1==='child') m=[{t:'14周岁及以下子女的户口簿或有效身份证件原件'},{t:'直系亲属关系证明材料（如出生证明等）'}];
+    if(a.q1==='old') m=[{t:'无需补充材料', note:true}];
+    groups.push({title:'根据改造类型准备', items:m});
+    return groups;
+  }
+},
+
+/* 8 电梯 */
+{ id:'elevator', no:'（八）', title:'既有住宅增设电梯', icon:'🛗',
+  tagline:'益阳市行政区域内既有住宅增设电梯',
+  loanGate:'block',
+  amount:'· 提取《特种设备使用登记证》发证日期之前的账户可用余额，总额不超过增设电梯工程建设费用中家庭实际分摊金额（不含电梯运行维护费用）。<br>· 仅限与增设电梯工程建设直接相关的必要支出；土地出让金、入户门窗改造、外立面装饰、楼道粉刷及电梯运行维护等费用不计入。<br>· 电梯通过联合竣工验收后的任何期限均可申请。',
+  notes:['同一套住房增设电梯仅限提取一次。','《特种设备使用登记证》发证日期在2023年7月12日（含）之后的，可就双方父母住宅加装电梯申请提取；之前的仅限职工本人及配偶自有产权住宅。'].concat(COMMON_NOTES),
+  questions:[
+    { id:'q1', type:'select', text:'增设电梯住宅的产权属于？',
+      opts:[{v:'self',label:'职工本人及配偶'},{v:'parent',label:'职工及配偶双方父母'}] },
+    { id:'q2', type:'yesno', text:'是否在益阳市行政区域内既有住宅增设电梯？',
+      eligible:function(v){return v==='yes';},
+      fail:'增设电梯提取须为益阳市行政区域内既有住宅。' },
+    { id:'q3', type:'yesno', text:'《特种设备使用登记证》发证日期是否在2023年7月12日（含）之后？',
+      hint:'发证日期在此之前的，仅限职工本人及配偶自有产权住宅申请。',
+      eligible:function(v){return v==='yes';},
+      fail:'发证日期在2023年7月12日之前，仅可对职工本人及配偶自有产权住宅申请提取，请调整产权归属选择。',
+      showIf:function(a){return a.q1==='parent';} }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    var c=groups[0].items;
+    c.push('提取人第二代有效身份证原件','提取人个人银行储蓄账户');
+    if(a.marital==='married') c.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（已婚提供）');
+    c.push('《特种设备使用登记证》原件或复印件','增设电梯住房的《房屋所有权证》或《不动产权证书》原件','增设电梯费用分摊书面协议原件（须明确各户分摊金额）');
+    if(a.q1==='parent') groups.push({title:'产权人为双方父母时补充', items:[{t:'亲属关系证明原件（如户口簿、独生子女证等）'}]});
+    return groups;
+  }
+},
+
+/* 9 物业费/契税/维修资金 */
+{ id:'fees', no:'（九）', title:'支付物业费、契税及住宅专项维修资金', icon:'🧾',
+  tagline:'支付物业费 / 契税 / 住宅专项维修资金',
+  loanGate:'block',
+  amount:'· 支付物业费：申请人和配偶年度合计提取金额最高不超过4000元。<br>· 支付契税：提取金额不超过契税完税凭证实缴金额，且不超过契税缴纳日期当日申请人及配偶公积金账户余额。<br>· 支付住宅专项维修资金：提取金额不超过维修资金收据实缴金额，且不超过缴纳日期当日申请人及配偶公积金账户余额。',
+  notes:['拥有多套住房的，每年仅可选定一套办理一次支付物业费提取；同一套住房仅可办理一次支付契税和维修资金提取。','契税、维修资金缴纳日期指首次缴入国库或专户的日期，仅以税务及维修资金管理系统中的首次入库（缴纳）日期为依据，不含补打等情形。'].concat(COMMON_NOTES),
+  questions:[
+    { id:'q1', type:'select', text:'您要办理的提取类型是？',
+      opts:[{v:'fee',label:'支付物业费'},{v:'tax',label:'支付契税'},{v:'repairfund',label:'支付住宅专项维修资金'}] },
+    { id:'q2', type:'yesno', text:'您家庭是否在益阳市行政区域内拥有自有产权住房？',
+      eligible:function(v){return v==='yes';},
+      fail:'支付物业费提取须在益阳市行政区域内拥有自有产权住房。',
+      showIf:function(a){return a.q1==='fee' && a.hasHouse!=='yes';} },
+    { id:'q2b', type:'yesno', text:'您家庭是否购买了益阳市自住住房？',
+      eligible:function(v){return v==='yes';},
+      fail:'支付契税/维修资金提取须购买益阳市自住住房。',
+      showIf:function(a){return a.q1!=='fee' && a.hasHouse!=='yes';} },
+    { id:'q3', type:'yesno', text:'契税缴纳日期是否在2026年8月6日（含）之后？',
+      eligible:function(v){return v==='yes';},
+      fail:'契税提取须缴纳日期在2026年8月6日（含）之后。',
+      showIf:function(a){return a.q1==='tax';} },
+    { id:'q3b', type:'yesno', text:'维修资金缴纳日期是否在2026年8月6日（含）之后？',
+      eligible:function(v){return v==='yes';},
+      fail:'维修资金提取须缴纳日期在2026年8月6日（含）之后。',
+      showIf:function(a){return a.q1==='repairfund';} },
+    { id:'q4', type:'select', text:'房屋产权证取得情况？',
+      opts:[{v:'cert',label:'已取得《不动产权证书》或《房屋所有权证》'},{v:'nocert',label:'未取得产权证（已有备案或预告登记的商品房买卖合同）'}] }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    var c=groups[0].items;
+    c.push('提取人第二代有效身份证原件','提取人个人银行储蓄账户');
+    if(a.marital==='married') c.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（已婚提供）');
+    c.push(a.q4==='cert'
+      ? {t:'《不动产权证书》或《房屋所有权证》原件', tag:'已取得产权证'}
+      : {t:'已备案或预告登记的《商品房买卖合同》原件', tag:'未取得产权证'});
+    var m=[];
+    if(a.q1==='fee') m=[{t:'无需提供补充材料', note:true}];
+    if(a.q1==='tax') m=[{t:'契税完税凭证原件', tag:'支付契税'}];
+    if(a.q1==='repairfund') m=[{t:'住宅专项维修资金收据原件', tag:'维修资金'}];
+    groups.push({title:'根据提取类型准备', items:m});
+    return groups;
+  }
+},
+
+/* 10-1 退休、离休提取（销户） */
+{ id:'retire', no:'（十）', title:'退休、离休提取（销户）', icon:'📤',
+  tagline:'已达法定退休年龄或已办理退休、离休手续',
+  loanGate:'warn',
+  amount:'· 全额销户提取。',
+  notes:['申请时职工账户需为封存状态。','法定退休年龄以《全国人民代表大会常务委员会关于实施渐进式延迟法定退休年龄的决定》为准。'].concat(COMMON_NOTES),
+  questions:[
+    { id:'q2', type:'yesno', text:'您是否已达到法定退休年龄，或已办理退休、离休手续？',
+      eligible:function(v){return v==='yes';},
+      fail:'退休提取须已达法定退休年龄或已办理退休、离休手续。' },
+    { id:'q4', type:'yesno', text:'您的公积金账户当前是否处于封存状态？',
+      eligible:function(v){return v==='yes';},
+      fail:'申请销户提取时账户需为封存状态。' }
+  ],
+  materials:function(a){
+    var items=['提取人第二代有效身份证原件','提取人个人银行储蓄账户'];
+    if(a.marital==='married') items.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（配偶代办的提供）');
+    items.push('《退休证》《离休证》或单位退休证明原件');
+    items.push({t:'已达法定退休年龄的无需提供补充资料', note:true});
+    return [{title:'所需资料', items:items}];
+  }
+},
+/* 10-2 离职提取（解除或终止劳动关系） */
+{ id:'resign', no:'（十）', title:'离职提取（解除或终止劳动关系）', icon:'📤',
+  tagline:'买断工龄、辞职、辞退、开除等，账户封存满半年',
+  loanGate:'warn',
+  amount:'· 全额销户提取。',
+  notes:['与单位解除或终止劳动关系包含买断工龄、辞职、辞退、开除、刑事处分等。','职工是否在异地有缴存公积金，由市公积金中心联网核查；在异地有正常缴存账户的，应办理异地转移接续。'].concat(COMMON_NOTES),
+  questions:[
+    { id:'q2', type:'yesno', text:'您的公积金账户是否已封存满半年，且最近半年无缴存资金进账？',
+      eligible:function(v){return v==='yes';},
+      fail:'离职提取须账户封存满半年且最近半年无缴存资金进账。' },
+    { id:'q3', type:'yesno', text:'您是否在异地有正常缴存的公积金账户？',
+      hint:'若在异地有正常缴存账户，应办理异地转移接续而非提取。',
+      eligible:function(v){return v==='no';},
+      fail:'您在异地有正常缴存公积金账户，应办理异地转移接续，暂不可提取。' },
+    { id:'q4', type:'yesno', text:'您的公积金账户当前是否处于封存状态？',
+      eligible:function(v){return v==='yes';},
+      fail:'申请销户提取时账户需为封存状态。' }
+  ],
+  materials:function(a){
+    var items=['提取人第二代有效身份证原件','提取人个人银行储蓄账户'];
+    if(a.marital==='married') items.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（配偶代办的提供）');
+    return [{title:'所需资料', items:items}];
+  }
+},
+/* 10-3 出境定居提取（销户） */
+{ id:'emigrate', no:'（十）', title:'出境定居提取（销户）', icon:'📤',
+  tagline:'已出境定居',
+  loanGate:'warn',
+  amount:'· 全额销户提取。',
+  notes:['申请时职工账户需为封存状态。'].concat(COMMON_NOTES),
+  questions:[
+    { id:'q2', type:'yesno', text:'您是否已出境定居？',
+      eligible:function(v){return v==='yes';},
+      fail:'出境定居提取须已出境定居。' },
+    { id:'q4', type:'yesno', text:'您的公积金账户当前是否处于封存状态？',
+      eligible:function(v){return v==='yes';},
+      fail:'申请销户提取时账户需为封存状态。' }
+  ],
+  materials:function(a){
+    var items=['提取人第二代有效身份证原件','提取人个人银行储蓄账户'];
+    if(a.marital==='married') items.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（配偶代办的提供）');
+    items.push('户籍注销或出境定居证明原件');
+    return [{title:'所需资料', items:items}];
+  }
+},
+/* 10-4 灵活就业人员提取（销户） */
+{ id:'flexible', no:'（十）', title:'灵活就业人员提取（销户）', icon:'📤',
+  tagline:'灵活就业人员自愿缴存账户',
+  loanGate:'warn',
+  amount:'· 全额销户提取。',
+  notes:['灵活就业人员申请提取时，账户不要求封存状态。','账户有单位转入资金的，须满半年后才能提取。'].concat(COMMON_NOTES),
+  questions:[
+    { id:'q2', type:'yesno', text:'您是否为灵活就业人员？',
+      eligible:function(v){return v==='yes';},
+      fail:'须为灵活就业人员方可办理。' }
+  ],
+  materials:function(a){
+    var items=['提取人第二代有效身份证原件','提取人个人银行储蓄账户'];
+    if(a.marital==='married') items.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（配偶代办的提供）');
+    return [{title:'所需资料', items:items}];
+  }
+},
+
+/* 11 重大疾病 */
+{ id:'illness', no:'（十一）', title:'重大疾病', icon:'🏥',
+  tagline:'申请人家庭及未成年子女身患重大疾病',
+  loanGate:'block',
+  amount:'· 首次提取额度不超过近一年个人负担的医疗费用总额（不含医保账户支付部分）。<br>· 再次提取额度不超过上次提取日至本次提取日个人负担的医疗费用总额。',
+  notes:['重大疾病种类范围以中国保险行业协会和中国医师协会发布的重大疾病范围为准。'].concat(COMMON_NOTES),
+  refs:[{title:'重大疾病范围（《重大疾病保险的疾病定义使用规范（2020年修订版）》共31种）', body:DISEASES_31.join('\n')}],
+  questions:[
+    { id:'q1', type:'select', text:'患病人员是？',
+      opts:[{v:'self',label:'职工本人'},{v:'spouse',label:'配偶',showIf:function(a){return a.marital!=='single';}},{v:'child',label:'未成年子女（18周岁及以下）'}] },
+    { id:'q2', type:'select', text:'所患疾病是否属于重大疾病范围（共31种，可在下方“政策参考”中查看）？',
+      opts:[{v:'yes',label:'属于重大疾病范围'},{v:'no',label:'不属于/不确定'}],
+      eligible:function(v){return v==='yes';},
+      fail:'须身患重大疾病范围内的疾病方可申请，具体以《重大疾病保险的疾病定义使用规范（2020年修订版）》及中心审核为准。' },
+    { id:'q3', type:'yesno', text:'是否可提供县级以上医院出具的疾病诊断证明、医疗费用发票和住院结算单？',
+      eligible:function(v){return v==='yes';},
+      fail:'申请重大疾病提取须提供县级以上医院出具的诊断证明、医疗费用发票及住院结算单。' }
+  ],
+  materials:function(a){
+    var groups=[{title:'必备材料', items:[
+      '提取人第二代有效身份证原件','提取人个人银行储蓄账户'
+    ]}];
+    if(a.marital==='married') groups[0].items.push('配偶第二代有效身份证原件 + 夫妻关系证明原件（已婚提供）');
+    groups[0].items.push('县级以上医院出具的疾病诊断证明 + 医疗费用发票 + 住院结算单');
+    if(a.q1==='child') groups[0].items.push('子女户口簿或有效身份证件 + 直系亲属关系证明材料（患病人为未成年子女的提供）');
+    return groups;
+  }
+},
+
+/* 12 死亡 */
+{ id:'death', no:'（十二）', title:'职工死亡或被宣告死亡', icon:'🕊️',
+  tagline:'职工死亡或被宣告死亡后的销户提取',
+  loanGate:'warn',
+  amount:'· 有生效法律文书：按生效法律文书规定销户提取。<br>· 无生效法律文书：第一顺序继承人（配偶、子女、父母）账户余额5万元（含）以下出具《承诺书》销户提取，5万元以上须提供涉及遗产分配相关规定的《公证书》；非第一顺序继承人1万元（含）以下出具《承诺书》，1万元以上须提供《公证书》。',
+  notes:['资金去向：提取资金转入配偶、继承人或法定代理人银行储蓄账户（生效法律文书或《公证书》有指定账户的除外）。','继承人不满十周岁或患有精神病无行为能力的，由法定代理人代为办理。'].concat(COMMON_NOTES),
+  refs:[{title:'申请人与证明文件说明', body:'死亡证明包括：民政部门出具的火化证明、医院出具的死亡证明、公安部门出具的职工死亡户籍注销证明或死亡通知书。\n具有法律效力的继承或受遗赠法律文书包括：人民法院生效判决书、调解书、经人民调解委员会调解达成的继承、遗赠调解书、公证书等。\n申请人顺序：配偶 → 子女、父母（第一顺序）→ 兄弟姐妹、祖父母、外祖父母（第二顺序）→ 受遗赠人。'}],
+  questions:[
+    { id:'q1', type:'yesno', text:'职工是否已死亡或被宣告死亡？',
+      eligible:function(v){return v==='yes';},
+      fail:'须职工死亡或被宣告死亡方可办理销户提取。' },
+    { id:'q2', type:'select', text:'申请人身份是？',
+      opts:[{v:'spouse',label:'配偶'},{v:'heir',label:'继承人（无配偶）'},{v:'agent',label:'法定代理人（继承人无行为能力时）'}] },
+    { id:'q3', type:'yesno', text:'是否具有生效法律文书（生效判决书、调解书、公证书等）？',
+      hint:'有生效法律文书按文书规定销户提取；无法律文书则按顺序及余额限额确定资料。' },
+    { id:'q4', type:'select', text:'申请人属于哪个顺序？（无生效法律文书时）',
+      opts:[{v:'first',label:'第一顺序（配偶、子女、父母）'},{v:'second',label:'第二顺序（兄弟姐妹、祖父母、外祖父母）或受遗赠人'}],
+      showIf:function(a){return a.q3==='no';} },
+    { id:'q5', type:'yesno', text:'公积金账户余额是否在限额内？（第一顺序≤5万元；非第一顺序≤1万元）',
+      hint:'限额内出具《承诺书》销户提取；超限额须提供涉及遗产分配相关规定的《公证书》。',
+      showIf:function(a){return a.q3==='no';} }
+  ],
+  materials:function(a){
+    var groups=[{title:'共同必备材料', items:[]}];
+    var c=groups[0].items;
+    c.push('死亡证明原件（火化证明/医院死亡证明/公安户籍注销证明或死亡通知书）','提取人个人银行储蓄账户');
+    if(a.q3==='yes') c.push('具有法律效力的继承或受遗赠法律文书原件（生效判决书、调解书、公证等）');
+    if(a.q3==='no'){
+      var limit = a.q4==='first' ? 50000 : 10000;
+      c.push(a.q5==='yes'
+        ? {t:'《承诺书》（向公积金中心出具）', tag:'余额'+limit+'元及以下'}
+        : {t:'涉及遗产分配相关规定的《公证书》', tag:'余额超过'+limit+'元'});
+    }
+    var p=[];
+    if(a.q2==='spouse') p=[{t:'配偶第二代有效身份证原件'},{t:'夫妻关系证明原件'}];
+    if(a.q2==='heir') p=[{t:'继承人第二代有效身份证原件'},{t:'关系证明原件'}];
+    if(a.q2==='agent') p=[{t:'法定代理人第二代有效身份证原件'},{t:'关系证明原件'}];
+    groups.push({title:'根据申请人身份准备', items:p});
+    return groups;
+  }
+}
+];
+
+/* ============ 状态与流程 ============ */
+var state={ marital:null, hasHouse:null, houseType:null, loan:null, loanType:null, intergen:null, cat:null, answers:{} };
+
+function $(id){return document.getElementById(id);}
+
+function show(id,flag){ $(id).classList.toggle('hidden',!flag); }
+function toast(msg){
+  var t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._timer); t._timer=setTimeout(function(){t.classList.remove('show');},2600);
+}
+
+/* 步骤标签 */
+function renderSteps(){
+  var active= state.cat?3:(state.marital?2:1);
+  var tags=[$('step1tag'),$('step2tag'),$('step3tag')];
+  tags.forEach(function(t,i){
+    t.classList.remove('active','done');
+    if(i+1<active) t.classList.add('done');
+    if(i+1===active) t.classList.add('active');
+  });
+}
+
+/* Step1 全局选项 */
+function bindOpts(elId, key){
+  $(elId).addEventListener('click', function(e){
+    var opt=e.target.closest('.opt'); if(!opt) return;
+    if(opt.classList.contains('locked')){
+      toast(opt.dataset.lockToast || '该选项暂不可选择');
+      return;
+    }
+    Array.prototype.forEach.call(this.children,function(c){c.classList.remove('selected');});
+    opt.classList.add('selected');
+    state[key]=opt.dataset.v;
+    syncGlobal();
+  });
+}
+function clearSel(id){
+  Array.prototype.forEach.call($(id).children,function(c){c.classList.remove('selected');});
+}
+function syncGlobal(){
+  var h=state.hasHouse==='yes', l=state.loan==='yes';
+  $('houseTypeBox').style.display = h?'block':'none';
+  $('loanTypeBox').style.display = l?'block':'none';
+  if(!h && state.houseType){ state.houseType=null; clearSel('g-houseType'); }
+  if(!l && state.loanType){ state.loanType=null; clearSel('g-loanType'); }
+  /* 在益阳无自住住房时，本地公积金贷款/本地组合贷款不可选（有本地贷款的前提是在益阳购房） */
+  var localLocked = state.hasHouse==='no';
+  ['local','combo'].forEach(function(lt){
+    var opt=document.querySelector('#g-loanType .opt[data-v="'+lt+'"]');
+    if(opt) opt.classList.toggle('locked', localLocked);
+  });
+  var hint=$('loanLocalHint');
+  if(hint) hint.style.display = (l && localLocked)?'block':'none';
+  if(localLocked && (state.loanType==='local'||state.loanType==='combo')){
+    state.loanType=null; clearSel('g-loanType');
+  }
+  renderSteps();
+}
+function initGlobal(){
+  bindOpts('g-marital','marital');
+  bindOpts('g-house','hasHouse');
+  bindOpts('g-houseType','houseType');
+  bindOpts('g-loan','loan');
+  bindOpts('g-loanType','loanType');
+  bindOpts('g-intergen','intergen');
+}
+
+/* Step2 类别网格 */
+function intergenRule(cat){
+  if(state.intergen==='yes') return cat.id==='intergen' ? null : 'intergenLock';
+  if(state.intergen==='no' && cat.id==='intergen') return 'notIntergen';
+  return null;
+}
+function loanRule(cat){
+  if(state.loan==='no'){
+    if(cat.loanKey) return 'noLoan';
+    return null;
+  }
+  /* loan==='yes' */
+  if(cat.loanKey){
+    return (cat.loanKey===state.loanType)?null:'typeMismatch';
+  }
+  /* 依据政策特别规定：家庭在益阳有住房公积金贷款余额的，公积金只能用于偿还公积金贷款或本市组合贷款银行部分本息。
+     因此仅「本地住房公积金贷款」「本地住房公积金组合贷款」限制其他提取；异地公积金贷款、商业银行住房贷款不限制。 */
+  if(state.loanType==='local'||state.loanType==='combo') return 'hasLoan';
+  return null;
+}
+function houseRule(cat){
+  if(state.hasHouse==='no' && (cat.id==='decorate'||cat.id==='renovate'||cat.id==='buy'||cat.id==='build'||cat.id==='elevator'||cat.id==='fees')) return 'noHouse';
+  return null;
+}
+/* 各限制条件可叠加：一个类别须同时满足 代际互助 → 贷款 → 住房 全部约束才可办理 */
+function blockedReason(cat){
+  var r=intergenRule(cat);
+  if(!r) r=loanRule(cat);
+  if(!r) r=houseRule(cat);
+  return r;
+}
+var REASON_TEXT={
+  intergenLock:{badge:'代际互助模式',toast:'您选择了父母、子女互助购房提取或参与还贷，仅可办理「购买新建商品房代际互助」。'},
+  notIntergen:{badge:'非代际互助',toast:'您未选择父母、子女互助购房提取或参与还贷，该项暂不可办理。'},
+  noLoan:{badge:'无住房贷款',toast:'您家庭没有住房贷款，偿还贷款类业务暂不可办理。'},
+  typeMismatch:{badge:'贷款类型不符',toast:null},
+  hasLoan:{badge:'有本地公积金贷款',toast:'您家庭有本地住房公积金贷款，公积金仅限用于偿还公积金贷款或本市组合贷款银行部分本息，其他提取类别暂不可办理。'},
+  noHouse:{badge:'无自住住房',toast:'您家庭在益阳无自住住房，该业务暂不适用。'}
+};
+function renderCats(){
+  var grid=$('catGrid'); grid.innerHTML='';
+  var oldWarn=document.querySelector('.no-active-notice');
+  if(oldWarn) oldWarn.remove();
+  CATS.forEach(function(cat){
+    var d=document.createElement('div');
+    d.className='cat-card';
+    var reason=blockedReason(cat);
+    var matched = !reason && ((state.loan==='yes' && cat.loanKey && cat.loanKey===state.loanType) || (state.intergen==='yes' && cat.id==='intergen'));
+    if(reason) d.classList.add('blocked');
+    if(matched) d.classList.add('match');
+    var badge= reason ? '<div class="cat-badge">'+(reason==='typeMismatch'?'贷款类型不符':REASON_TEXT[reason].badge)+'</div>' : '';
+    d.innerHTML=
+      badge+
+      (matched?'<div class="cat-badge match">'+(state.intergen==='yes'?'✓ 代际互助模式':'✓ 与您的贷款类型匹配')+'</div>':'')+
+      '<div><span class="cat-no">'+cat.no+'</span> <span class="cat-icon">'+cat.icon+'</span></div>'+
+      '<div class="cat-title">'+cat.title+'</div>'+
+      '<div class="cat-tagline">'+cat.tagline+'</div>';
+    d.addEventListener('click',function(){
+      if(reason){
+        if(reason==='typeMismatch'){
+          toast('与您选择的贷款类型「'+LOAN_TYPE_NAMES[state.loanType]+'」不符，仅可办理匹配的还贷业务。');
+        }else{
+          toast(REASON_TEXT[reason].toast);
+        }
+        return;
+      }
+      state.cat=cat; state.answers={};
+      goStep(3);
+    });
+    grid.appendChild(d);
+  });
+  if(grid.querySelectorAll('.cat-card:not(.blocked)').length===0){
+    var warn=document.createElement('div');
+    warn.className='info-block no-active-notice';
+    warn.style.marginTop='16px';
+    warn.innerHTML='⚠️ <b>根据您填写的基本信息，当前没有可办理的提取类别。</b><br>您同时选择了「本地住房公积金贷款（含本地组合贷款）」和「父母、子女互助购房提取或参与还贷」：有本地住房公积金贷款时仅限办理匹配的偿还贷款类业务，而选择代际互助时仅可办理代际互助业务，二者条件互斥。请点击右上角「重新开始」，修改基本信息后重新选择。';
+    grid.parentNode.insertBefore(warn, grid.nextSibling);
+  }
+}
+
+/* Step3 问题渲染 */
+function visibleQs(cat, c){
+  return cat.questions.filter(function(q){ return !q.showIf || q.showIf(c); });
+}
+function renderQuestions(){
+  var cat=state.cat;
+  $('qTitle').innerHTML=cat.icon+' '+cat.title+'（'+cat.no+'）';
+  $('qTagline').textContent=cat.tagline+' —— 请如实回答以下问题，系统将自动判断是否符合提取条件。';
+  $('loanWarnBox').style.display = (state.loan==='yes' && cat.loanGate==='warn')?'block':'none';
+  var box=$('qContainer'); box.innerHTML='';
+  var seen={};
+  cat.questions.forEach(function(q,i){
+    var holder=document.createElement('div');
+    holder.className='q-card';
+    holder.id='qc-'+q.id;
+    var optsHtml='';
+    if(q.type==='yesno'){
+      optsHtml='<div class="q-options">'+
+        '<div class="q-opt" data-v="yes">是</div><div class="q-opt" data-v="no">否</div></div>';
+    }else{
+      var c=ctx();
+      var opts=q.opts.filter(function(o){ return !o.showIf || o.showIf(c); });
+      optsHtml='<div class="q-options">'+opts.map(function(o){
+        return '<div class="q-opt" data-v="'+o.v+'">'+o.label+'</div>';
+      }).join('')+'</div>';
+    }
+    holder.innerHTML=
+      '<div class="q-text">'+(i+1)+'. '+q.text+'</div>'+
+      (q.hint?'<div class="q-hint">💡 '+q.hint+'</div>':'')+
+      optsHtml;
+    holder.addEventListener('click',function(e){
+      var opt=e.target.closest('.q-opt'); if(!opt) return;
+      Array.prototype.forEach.call(holder.querySelectorAll('.q-opt'),function(c){c.classList.remove('selected','failed');});
+      opt.classList.add('selected');
+      state.answers[q.id]=opt.dataset.v;
+      syncVisibility();
+    });
+    box.appendChild(holder);
+  });
+  if(cat.refs){
+    var refBox=document.createElement('div');
+    refBox.className='refs-on-questions';
+    refBox.innerHTML=cat.refs.map(function(r){
+      return '<details class="ref-box" style="margin-top:14px;"><summary>📖 政策参考：'+r.title+'</summary><div class="ref-body">'+r.body+'</div></details>';
+    }).join('');
+    box.appendChild(refBox);
+  }
+  syncVisibility();
+  if(visibleQs(cat,ctx()).length===0){
+    setTimeout(judge,400);
+  }
+}
+function syncVisibility(){
+  var cat=state.cat, c=ctx();
+  cat.questions.forEach(function(q){
+    var showIt=!q.showIf || q.showIf(c);
+    var el=$('qc-'+q.id);
+    if(el) el.classList.toggle('hidden',!showIt);
+    if(!showIt && state.answers[q.id]!==undefined) delete state.answers[q.id];
+  });
+}
+
+/* 判断 */
+function judge(){
+  var cat=state.cat;
+  var c=ctx();
+  var qs=visibleQs(cat,c);
+  var missing=qs.filter(function(q){return state.answers[q.id]===undefined;});
+  if(missing.length){
+    var first=missing[0];
+    var el=$('qc-'+first.id);
+    if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.style.borderColor='var(--danger)'; setTimeout(function(){el.style.borderColor='';},2000); }
+    toast('请先回答：'+first.text);
+    return;
+  }
+  var fails=[];
+  qs.forEach(function(q){
+    if(q.eligible && !q.eligible(state.answers[q.id], c)) fails.push(q);
+  });
+  if(state.loan==='yes' && cat.id==='intergen' && state.answers.q1==='buy'){
+    fails.push({text:'代际互助购房提取（您家庭有住房贷款）', fail:'根据特别规定，职工家庭有住房贷款的，公积金只能用于偿还公积金贷款或本市组合贷款银行部分本息，代际互助购房提取暂不可办理；如需还贷，可选择「代际互助参与还贷」。'});
+  }
+  renderResult(fails);
+}
+function renderResult(fails){
+  var area=$('resultArea'); area.innerHTML='';
+  if(fails.length===0){
+    /* 符合 */
+    var banner=document.createElement('div');
+    banner.className='result-banner pass';
+    banner.innerHTML='<div class="r-icon">✅</div><div><div class="r-title">恭喜！您符合「'+state.cat.title+'」提取条件</div>'+
+      '<div class="r-desc">已为您自动生成所需资料清单，请按清单准备材料，前往益阳市住房公积金管理中心网点办理。</div></div>';
+    area.appendChild(banner);
+    var amt=document.createElement('div');
+    amt.className='amount-box';
+    amt.innerHTML='<div class="ab-title">💰 提取金额</div><div style="margin-top:4px;">'+state.cat.amount+'</div>';
+    area.appendChild(amt);
+    area.insertAdjacentHTML('beforeend', officialLink());
+    var notes=document.createElement('div');
+    notes.className='modal-note';
+    notes.innerHTML='<b>📌 注意事项</b><ul style="margin-top:6px;padding-left:18px;">'+state.cat.notes.map(function(n){return '<li>'+n+'</li>';}).join('')+'</ul>';
+    area.appendChild(notes);
+    var btnRow=document.createElement('div');
+    btnRow.className='btn-row';
+    btnRow.innerHTML='<button class="btn btn-success" id="btnReopen">📄 查看所需资料清单</button>'+
+      '<button class="btn btn-ghost" id="btnAgain">再测一次</button>';
+    area.appendChild(btnRow);
+    $('btnReopen').addEventListener('click',function(){openModal();});
+    $('btnAgain').addEventListener('click',function(){goStep(2);});
+    /* 自动弹出资料清单 */
+    setTimeout(openModal,400);
+  }else{
+    /* 不符合 */
+    var banner=document.createElement('div');
+    banner.className='result-banner fail';
+    banner.innerHTML='<div class="r-icon">❌</div><div><div class="r-title">很遗憾，您目前不符合「'+state.cat.title+'」提取条件</div>'+
+      '<div class="r-desc">以下项目未满足，请对照检查；符合条件后即可准备资料办理。</div></div>';
+    area.appendChild(banner);
+    var list=document.createElement('div');
+    list.className='fail-list';
+    fails.forEach(function(q){
+      var it=document.createElement('div');
+      it.className='fail-item';
+      it.innerHTML='<div class="fi-icon">✕</div><div><div class="fi-reason">'+q.text+'</div><div class="fi-hint">'+q.fail+'</div></div>';
+      list.appendChild(it);
+    });
+    area.appendChild(list);
+    area.insertAdjacentHTML('beforeend', officialLink());
+    var btnRow=document.createElement('div');
+    btnRow.className='btn-row';
+    btnRow.innerHTML='<button class="btn btn-primary" id="btnRetry">修改回答重新判断</button>'+
+      '<button class="btn btn-ghost" id="btnOther">选择其他提取类别</button>';
+    area.appendChild(btnRow);
+    $('btnRetry').addEventListener('click',function(){area.innerHTML=''; area.scrollIntoView({behavior:'smooth'});});
+    $('btnOther').addEventListener('click',function(){goStep(2);});
+  }
+  area.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function officialLink(){
+  return '<a class="official-link" href="http://www.yygjj.cn/27402/27404/index.htm" target="_blank" rel="noopener">🔗 前往益阳公积金官网，查看该项提取业务办事指南 →</a>';
+}
+
+/* 资料弹窗 */
+function ctx(){
+  var c=Object.assign({}, state.answers);
+  c.marital=state.marital;
+  c.hasHouse=state.hasHouse;
+  c.houseType=state.houseType;
+  c.loan=state.loan;
+  c.loanType=state.loanType;
+  c.intergen=state.intergen;
+  return c;
+}
+function openModal(){
+  var a=ctx(), cat=state.cat;
+  $('mh-sub').textContent=cat.no+' '+cat.title+' —— 符合提取条件，请准备以下材料';
+  var body=$('modalBody'); body.innerHTML='';
+  var groups=cat.materials(a);
+  var all=[];
+  groups.forEach(function(g){ all=all.concat(g.items); });
+  all=all.filter(function(it){
+    var t=typeof it==='string'?it:it.t;
+    return t.indexOf('无需')!==0;
+  });
+  var div=document.createElement('div');
+  div.className='mat-group';
+  var html=all.map(function(it){
+    var t = typeof it==='string'?it:it.t;
+    var tag = (typeof it==='object'&&it.tag)?'<span class="mat-tag">'+it.tag+'</span>':'';
+    var cls = (typeof it==='object'&&it.note)?' style="color:var(--muted);"':'';
+    return '<label class="mat-item"><input type="checkbox"><span'+cls+'>'+t+tag+'</span></label>';
+  }).join('');
+  div.innerHTML='<div class="mg-title">📄 所需资料清单</div>'+html;
+  body.appendChild(div);
+  var note=document.createElement('div');
+  note.className='modal-note';
+  note.innerHTML='<b>💡 提示</b><ul style="margin-top:6px;padding-left:18px;">'+cat.notes.map(function(n){return '<li>'+n+'</li>';}).join('')+'</ul>';
+  body.appendChild(note);
+  var amt=document.createElement('div');
+  amt.className='amount-box';
+  amt.innerHTML='<div class="ab-title">💰 提取金额</div><div style="margin-top:4px;">'+cat.amount+'</div>';
+  body.appendChild(amt);
+  body.insertAdjacentHTML('beforeend', officialLink());
+  $('materialsModal').classList.add('open');
+}
+function closeModal(){ $('materialsModal').classList.remove('open'); }
+function printList(){
+  document.body.classList.add('printing');
+  window.print();
+  document.body.classList.remove('printing');
+}
+
+/* 步骤切换 */
+function goStep(n){
+  var onCover=n===0;
+  document.body.classList.toggle('on-cover',onCover);
+  show('sec-cover',onCover);
+  show('sec-global',n===1);
+  show('sec-cats',n===2);
+  show('sec-questions',n===3);
+  if(n===2) renderCats();
+  if(n===3){ $('resultArea').innerHTML=''; renderQuestions(); }
+  renderSteps();
+  if(!onCover) window.scrollTo({top:0,behavior:'smooth'});
+}
+function resetAll(){
+  state={marital:null,hasHouse:null,houseType:null,loan:null,loanType:null,intergen:null,cat:null,answers:{}};
+  ['g-marital','g-house','g-houseType','g-loan','g-loanType','g-intergen'].forEach(clearSel);
+  $('houseTypeBox').style.display='none';
+  $('loanTypeBox').style.display='none';
+  $('coverAgree').checked=false;
+  $('btnEnter').disabled=true;
+  closeModal();
+  goStep(0);
+}
+
+/* 事件绑定 */
+initGlobal();
+$('coverAgree').addEventListener('change',function(){ $('btnEnter').disabled = !this.checked; });
+$('btnEnter').addEventListener('click',function(){
+  if(!$('coverAgree').checked){ toast('请先阅读并同意免责申明'); return; }
+  goStep(1);
+});
+$('btnToCats').addEventListener('click',function(){
+  if(!state.marital){ toast('请先选择婚姻状况'); return; }
+  if(state.hasHouse===null){ toast('请先选择在益阳是否有住房'); return; }
+  if(state.hasHouse==='yes' && !state.houseType){ toast('请选择该住房类型（期房/现房）'); return; }
+  if(state.loan===null){ toast('请先选择是否有住房贷款'); return; }
+  if(state.loan==='yes' && !state.loanType){ toast('请选择住房贷款类型'); return; }
+  if(state.intergen===null){ toast('请先选择是否为父母、子女互助购房提取或参与还贷'); return; }
+  goStep(2);
+});
+$('btnBackGlobal').addEventListener('click',function(){goStep(1);});
+$('btnBackCats').addEventListener('click',function(){goStep(2);});
+$('btnJudge').addEventListener('click',judge);
+$('btnReset').addEventListener('click',resetAll);
+$('materialsModal').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+
+/* 初始化 */
+goStep(0);
+</script>
+</body>
+</html>
